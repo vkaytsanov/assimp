@@ -1314,6 +1314,28 @@ if (APPLE)
   ENDIF()
 ENDIF()
 
+# HEDGEBITE BEGIN
+
+# Remove build targets: RelWithDebInfo, MinSizeRel
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
+
+# Add Post-build event to create symbolic link to the dll
+IF (WIN32)
+  set(PlatformBuildFolder "bin_WinDesktop_$(Platform)")
+ELSE()
+  MESSAGE("PlatformBuildFolder is missing for this platform")
+ENDIF()
+
+set(EngineBuildFolder "$(SolutionDir)..\\Build\\${PlatformBuildFolder}\\$(Configuration)\\")
+
+add_custom_command(TARGET assimp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink
+    "$(TargetPath)"
+    "${EngineBuildFolder}\\$(TargetFileName)" 
+)
+
+# HEDGEBITE END
+
 # Build against external unzip, or add ../contrib/unzip so
 # assimp can #include "unzip.h"
 IF(NOT ASSIMP_HUNTER_ENABLED)
