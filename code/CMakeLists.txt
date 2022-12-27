@@ -1323,16 +1323,18 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 IF (WIN32)
   set(PlatformBuildFolder "bin_WinDesktop_$(Platform)")
 ELSE()
-  MESSAGE("PlatformBuildFolder is missing for this platform")
+  set(PlatformBuildFolder "AssimpUnknownFolder_$(Platform)")
 ENDIF()
 
 set(EngineBuildFolder "$(SolutionDir)..\\Build\\${PlatformBuildFolder}\\$(Configuration)\\")
 
-add_custom_command(TARGET assimp POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink
-    "$(TargetPath)"
-    "${EngineBuildFolder}\\$(TargetFileName)" 
-)
+IF (MSVC)
+  add_custom_command(TARGET assimp POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E create_symlink
+      "$(TargetPath)"
+      "${EngineBuildFolder}\\$(TargetFileName)" 
+  )
+ENDIF()
 
 # HEDGEBITE END
 
