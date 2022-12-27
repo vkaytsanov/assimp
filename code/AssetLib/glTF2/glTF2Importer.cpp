@@ -103,9 +103,7 @@ glTF2Importer::glTF2Importer() :
     // empty
 }
 
-glTF2Importer::~glTF2Importer() {
-    // empty
-}
+glTF2Importer::~glTF2Importer() = default;
 
 const aiImporterDesc *glTF2Importer::GetInfo() const {
     return &desc;
@@ -357,6 +355,13 @@ static aiMaterial *ImportMaterial(std::vector<int> &embeddedTexIdxs, Asset &r, M
             MaterialIOR &ior = mat.materialIOR.value;
 
             aimat->AddProperty(&ior.ior, 1, AI_MATKEY_REFRACTI);
+        }
+
+        // KHR_materials_emissive_strength
+        if (mat.materialEmissiveStrength.isPresent) {
+            MaterialEmissiveStrength &emissiveStrength = mat.materialEmissiveStrength.value;
+
+            aimat->AddProperty(&emissiveStrength.emissiveStrength, 1, AI_MATKEY_EMISSIVE_INTENSITY);
         }
 
         return aimat;

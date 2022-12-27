@@ -90,15 +90,14 @@ ObjFileParser::ObjFileParser(IOStreamBuffer<char> &streamBuffer, const std::stri
     // create default material and store it
     m_pModel->mDefaultMaterial = new ObjFile::Material;
     m_pModel->mDefaultMaterial->MaterialName.Set(DEFAULT_MATERIAL);
-    m_pModel->mMaterialLib.push_back(DEFAULT_MATERIAL);
+    m_pModel->mMaterialLib.emplace_back(DEFAULT_MATERIAL);
     m_pModel->mMaterialMap[DEFAULT_MATERIAL] = m_pModel->mDefaultMaterial;
 
     // Start parsing the file
     parseFile(streamBuffer);
 }
 
-ObjFileParser::~ObjFileParser() {
-}
+ObjFileParser::~ObjFileParser() = default;
 
 void ObjFileParser::setBuffer(std::vector<char> &buffer) {
     m_DataIt = buffer.begin();
@@ -441,7 +440,7 @@ void ObjFileParser::getFace(aiPrimitiveType type) {
     const bool vt = (!m_pModel->mTextureCoord.empty());
     const bool vn = (!m_pModel->mNormals.empty());
     int iPos = 0;
-    while (m_DataIt != m_DataItEnd) {
+    while (m_DataIt < m_DataItEnd) {
         int iStep = 1;
 
         if (IsLineEnd(*m_DataIt)) {
